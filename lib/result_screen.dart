@@ -44,8 +44,6 @@ class ResultScreen extends StatelessWidget {
       '∨': ' || ',
       '⊕': ' != ',
       '⊙': ' == ',
-      '↑': ' nand ',
-      '↓': ' nor ',
     };
 
     // Replace NOT operator first
@@ -85,9 +83,9 @@ class ResultScreen extends StatelessWidget {
       }
     }
 
-    // Handle NAND and NOR
-    result = result.replaceAll(' nand ', ' && ');
-    result = result.replaceAll(' nor ', ' || ');
+    // Handle NAND and NOR after replacing other operators
+    result = result.replaceAll('↑', ' nand '); // Handle NAND
+    result = result.replaceAll('↓', ' nor ');  // Handle NOR
     
     // Add parentheses around the entire expression if not already present
     if (!result.startsWith('(')) {
@@ -108,14 +106,18 @@ class ResultScreen extends StatelessWidget {
 
       // Convert and evaluate expression
       String expressionStr = _convertToExpressionFormat(expression);
+
+      print(expressionStr);
       
       // Handle NAND and NOR after conversion
       if (expressionStr.contains(' nand ')) {
-        expressionStr = '!(${expressionStr.replaceAll(" nand ", " && ")})';
+        expressionStr = '!(${expressionStr.replaceAll(' nand ', ' && ')})'; // Negate the AND expression
       }
       if (expressionStr.contains(' nor ')) {
-        expressionStr = '!(${expressionStr.replaceAll(" nor ", " || ")})';
+        expressionStr = '!(${expressionStr.replaceAll(' nor ', ' || ')})';   // Negate the OR expression
       }
+
+      print(expressionStr);
 
       final evaluator = const ExpressionEvaluator();
       final expr = Expression.parse(expressionStr);
