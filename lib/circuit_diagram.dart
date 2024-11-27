@@ -9,19 +9,18 @@ class CircuitDiagram extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Graph graph = Graph()..isTree = false;
-    final configuration = BuchheimWalkerConfiguration()
-      ..siblingSeparation = 100
+    final configuration = SugiyamaConfiguration()
+      ..nodeSeparation = 100
       ..levelSeparation = 100
-      ..subtreeSeparation = 100
-      ..orientation = BuchheimWalkerConfiguration.ORIENTATION_LEFT_RIGHT;
+      ..orientation = SugiyamaConfiguration.ORIENTATION_LEFT_RIGHT;
       
-    final Algorithm algorithm = BuchheimWalkerAlgorithm(configuration, TreeEdgeRenderer(configuration));
+    final Algorithm algorithm = SugiyamaAlgorithm(configuration);
 
-    Node outputNode = Node.Id('Output');
-    graph.addNode(outputNode);
+    Node resultNode = Node.Id('Result');
+    graph.addNode(resultNode);
 
     try {
-      _parseExpression(expression, graph, outputNode);
+      _parseExpression(expression, graph, resultNode);
     } catch (e) {
       print('Error parsing expression: $e');
     }
@@ -55,49 +54,77 @@ class CircuitDiagram extends StatelessWidget {
       expr = expr.substring(1, expr.length - 1).trim();
     }
 
-    if (expr.length == 1 && RegExp(r'[A-C]').hasMatch(expr)) {
-      Node inputNode = Node.Id(expr);
-      graph.addNode(inputNode);
-      graph.addEdge(parent, inputNode);
-      return;
+    List<String> operands = _splitOperands(expr);
+    if (operands.length > 1) {
+      var operator = _findOperator(expr);
+      if (operator != null) {
+        String gateName = _getGateName(operator);
+        Node gateNode = Node.Id(gateName);
+        graph.addNode(gateNode);
+        graph.addEdge(gateNode, parent);
+
+        for (String operand in operands) {
+          _parseExpression(operand.trim(), graph, gateNode);
+        }
+        return;
+      }
     }
 
     if (expr.startsWith('¬')) {
       Node notGate = Node.Id('NOT');
       graph.addNode(notGate);
-      graph.addEdge(parent, notGate);
+      graph.addEdge(notGate, parent);
       _parseExpression(expr.substring(1), graph, notGate);
-      return;
-    }
-
-    var operatorInfo = _findMainOperator(expr);
-    if (operatorInfo != null) {
-      var (operator, index) = operatorInfo;
-      String gateName = _getGateName(operator);
-      Node gateNode = Node.Id(gateName);
-      graph.addNode(gateNode);
-      graph.addEdge(parent, gateNode);
-
-      String leftExpr = expr.substring(0, index).trim();
-      String rightExpr = expr.substring(index + operator.length).trim();
-
-      _parseExpression(leftExpr, graph, gateNode);
-      _parseExpression(rightExpr, graph, gateNode);
+    } else if (RegExp(r'[A-Z]').hasMatch(expr)) {
+      Node inputNode = Node.Id(expr);
+      graph.addNode(inputNode);
+      graph.addEdge(inputNode, parent);
     }
   }
 
-  (String, int)? _findMainOperator(String expr) {
+  List<String> _splitOperands(String expr) {
+    List<String> operands = [];
+    int parenthesesCount = 0;
+    int start = 0;
+    
+    for (int i = 0; i < expr.length; i++) {
+      if (expr[i] == '(') parenthesesCount++;
+      else if (expr[i] == ')') parenthesesCount--;
+      
+      if (parenthesesCount == 0) {
+        for (var op in ['∧', '∨', '↑', '↓', '⊕', '⊙']) {
+          if (i + op.length <= expr.length && 
+              expr.substring(i, i + op.length) == op) {
+            if (start < i) {
+              operands.add(expr.substring(start, i));
+            }
+            start = i + op.length;
+            break;
+          }
+        }
+      }
+    }
+    
+    if (start < expr.length) {
+      operands.add(expr.substring(start));
+    }
+    
+    return operands;
+  }
+
+  String? _findOperator(String expr) {
     int parenthesesCount = 0;
     List<String> operators = ['↑', '↓', '∨', '∧', '⊕', '⊙'];
     
-    for (int i = expr.length - 1; i >= 0; i--) {
-      if (expr[i] == ')') parenthesesCount++;
-      else if (expr[i] == '(') parenthesesCount--;
+    for (int i = 0; i < expr.length; i++) {
+      if (expr[i] == '(') parenthesesCount++;
+      else if (expr[i] == ')') parenthesesCount--;
       
       if (parenthesesCount == 0) {
         for (var op in operators) {
-          if (i >= op.length - 1 && expr.substring(i - op.length + 1, i + 1) == op) {
-            return (op, i - op.length + 1);
+          if (i + op.length <= expr.length && 
+              expr.substring(i, i + op.length) == op) {
+            return op;
           }
         }
       }
