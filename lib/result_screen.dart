@@ -36,7 +36,7 @@ class ResultScreen extends StatelessWidget {
 
   String _convertToExpressionFormat(String input) {
     String result = input;
-    
+
     // Create a map for operator replacements
     final Map<String, String> operators = {
       '¬': '!',
@@ -52,7 +52,6 @@ class ResultScreen extends StatelessWidget {
       if (result[index] == '¬') {
         if (index + 1 < result.length) {
           if (result[index + 1] == '(') {
-            // Find matching closing parenthesis
             int count = 1;
             int endIndex = index + 2;
             while (count > 0 && endIndex < result.length) {
@@ -60,33 +59,51 @@ class ResultScreen extends StatelessWidget {
               if (result[endIndex] == ')') count--;
               endIndex++;
             }
-            result = result.substring(0, index) + 
-                     '!(' + 
-                     result.substring(index + 2, endIndex) + 
-                     ')' + 
-                     result.substring(endIndex);
+            if (endIndex <= result.length) {
+              result = result.substring(0, index) +
+                  '!(' +
+                  result.substring(index + 2, endIndex - 1) +
+                  ')' +
+                  result.substring(endIndex - 1);
+            }
           } else {
-            result = result.substring(0, index) + 
-                     '!' + 
-                     result[index + 1] + 
-                     (index + 2 < result.length ? result.substring(index + 2) : '');
+            result = result.substring(0, index) +
+                '!' +
+                result[index + 1] +
+                (index + 2 < result.length ? result.substring(index + 2) : '');
           }
         }
       }
       index++;
     }
 
+    // Handle NAND (↑) with parentheses
+    final nandRegex = RegExp(r'([A-Z]|\([^)]+\))\s*↑\s*([A-Z]|\([^)]+\))');
+    while (result.contains('↑')) {
+      result = result.replaceAllMapped(nandRegex, (match) {
+        String left = match.group(1)!;
+        String right = match.group(2)!;
+        return '!($left && $right)';
+      });
+    }
+
+    // Handle NOR (↓) with parentheses
+    final norRegex = RegExp(r'([A-Z]|\([^)]+\))\s*↓\s*([A-Z]|\([^)]+\))');
+    while (result.contains('↓')) {
+      result = result.replaceAllMapped(norRegex, (match) {
+        String left = match.group(1)!;
+        String right = match.group(2)!;
+        return '!($left || $right)';
+      });
+    }
+
     // Replace other operators
     for (var entry in operators.entries) {
-      if (entry.key != '¬') {  // Skip NOT as we already handled it
+      if (entry.key != '¬') { // Skip NOT as we already handled it
         result = result.replaceAll(entry.key, entry.value);
       }
     }
 
-    // Handle NAND and NOR after replacing other operators
-    result = result.replaceAll('↑', ' nand '); // Handle NAND
-    result = result.replaceAll('↓', ' nor ');  // Handle NOR
-    
     // Add parentheses around the entire expression if not already present
     if (!result.startsWith('(')) {
       result = '($result)';
