@@ -401,8 +401,13 @@ class _EquationInputPageState extends State<EquationInputPage> {
 
   void _handleKeyPress(String value) {
     setState(() {
-      if (value == 'Clear') {
+      if (value == 'CLR') {
         _controller.clear();
+      } else if (value == 'DEL') {
+        final text = _controller.text;
+        if (text.isNotEmpty) {
+          _controller.text = text.substring(0, text.length - 1);
+        }
       } else {
         _controller.text += value;
       }
@@ -496,6 +501,7 @@ class CustomKeyboard extends StatelessWidget {
         _buildKey('A'),         // Variable A
         _buildKey('B'),         // Variable B
         _buildKey('C'),         // Variable C
+        _buildKey('DEL', icon: Icons.backspace_outlined),  // Backspace button
         _buildKey('∧'),         // Logical AND (symbol: ∧)
         _buildKey('∨'),         // Logical OR (symbol: ∨)
         _buildKey('¬'),         // Logical NOT (symbol: ¬)
@@ -505,25 +511,27 @@ class CustomKeyboard extends StatelessWidget {
         _buildKey('⊙'),         // Logical XNOR (symbol: ⊙)
         _buildKey('('),         // Open parenthesis
         _buildKey(')'),         // Close parenthesis
-        _buildKey('Clear'),     // Clear
+        _buildKey('CLR'),       // Clear
       ],
     );
   }
 
-  Widget _buildKey(String label) {
+  Widget _buildKey(String label, {IconData? icon}) {
     return Padding(
-      padding: const EdgeInsets.all(8.0), // Space between buttons
+      padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
         onPressed: () {
           onKeyPressed(label);
         },
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // Smaller button size
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
         ),
-        child: Text(
-          label,
-          style: const TextStyle(fontSize: 16), // Larger font size
-        ),
+        child: icon != null 
+          ? Icon(icon, size: 24)
+          : Text(
+              label,
+              style: const TextStyle(fontSize: 16),
+            ),
       ),
     );
   }
