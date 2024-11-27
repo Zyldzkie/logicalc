@@ -4,6 +4,8 @@ import 'timing_diagram.dart';
 import 'circuit_diagram.dart';
 import 'dart:math' as Math;
 import 'truth_table.dart';
+import 'models/expression_history.dart';
+import 'services/history_service.dart';
 
 class ResultScreen extends StatelessWidget {
   final String expression;
@@ -148,6 +150,15 @@ class ResultScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _saveToHistory(String rawExpr, String convertedExpr) async {
+    final entry = ExpressionHistory(
+      rawExpression: rawExpr,
+      convertedExpression: convertedExpr,
+      timestamp: DateTime.now(),
+    );
+    await HistoryService.saveExpression(entry);
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> variables = _getVariables();
@@ -155,6 +166,9 @@ class ResultScreen extends StatelessWidget {
     List<bool> results = combinations.map(
       (combo) => _evaluateExpression(combo, variables)
     ).toList();
+
+    String convertedExpr = _convertToExpressionFormat(expression);
+    _saveToHistory(expression, convertedExpr); // Save to history
 
     return Scaffold(
       appBar: AppBar(

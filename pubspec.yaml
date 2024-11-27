@@ -38,6 +38,7 @@ dependencies:
   petitparser: ^6.0.2
   expressions: ^0.2.5+2
   graphview: ^1.2.0
+  shared_preferences: ^2.3.3
 
 
 dev_dependencies:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'dart:io';
 import 'result_screen.dart';
+import 'screens/history_page.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -457,28 +458,6 @@ class _EquationInputPageState extends State<EquationInputPage> {
               child: const Text('Convert', style: TextStyle(color: Colors.white)),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// History Page
-class HistoryPage extends StatelessWidget {
-  const HistoryPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('History', style: TextStyle(color: Colors.white)),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: Center(
-        child: const Text(
-          'History of conversions will be displayed here.',
-          style: TextStyle(fontSize: 24, color: Colors.black),
         ),
       ),
     );
