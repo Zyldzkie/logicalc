@@ -10,9 +10,10 @@ class CircuitDiagram extends StatelessWidget {
   Widget build(BuildContext context) {
     final Graph graph = Graph()..isTree = false;
     final configuration = SugiyamaConfiguration()
-      ..nodeSeparation = 100
-      ..levelSeparation = 100
-      ..orientation = SugiyamaConfiguration.ORIENTATION_LEFT_RIGHT;
+        ..nodeSeparation = 60
+        ..levelSeparation = 120
+        ..orientation = SugiyamaConfiguration.ORIENTATION_LEFT_RIGHT;
+  
       
     final Algorithm algorithm = SugiyamaAlgorithm(configuration);
 
@@ -150,6 +151,7 @@ class CircuitDiagram extends StatelessWidget {
     switch (gateType) {
       case 'AND':
         return _GateWidget(
+          offset: -20,
           child: CustomPaint(
             painter: AndGatePainter(),
             size: const Size(50, 50),
@@ -157,6 +159,7 @@ class CircuitDiagram extends StatelessWidget {
         );
       case 'OR':
         return _GateWidget(
+          offset: -20,
           child: CustomPaint(
             painter: OrGatePainter(),
             size: const Size(50, 50),
@@ -212,17 +215,24 @@ class CircuitDiagram extends StatelessWidget {
 
 class _GateWidget extends StatelessWidget {
   final Widget child;
+  final double offset;
 
-  const _GateWidget({required this.child});
+  const _GateWidget({
+    required this.child, 
+    this.offset = -10,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.transparent),
+    return Transform.translate(
+      offset: Offset(offset, 0),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.transparent),
+        ),
+        child: child,
       ),
-      child: child,
     );
   }
 }
