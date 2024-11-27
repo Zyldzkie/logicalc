@@ -3,6 +3,7 @@ import 'package:expressions/expressions.dart';
 import 'timing_diagram.dart';
 import 'circuit_diagram.dart';
 import 'dart:math' as Math;
+import 'truth_table.dart';
 
 class ResultScreen extends StatelessWidget {
   final String expression;
@@ -137,7 +138,7 @@ class ResultScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Truth Table'),
+        title: const Text('Table'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
@@ -153,39 +154,19 @@ class ResultScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold
               ),
             ),
-            const SizedBox(height: 20),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: [
-                  ...variables.map((var_) => DataColumn(
-                    label: Text(
-                      var_,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  )),
-                  const DataColumn(
-                    label: Text(
-                      'Result',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-                rows: combinations.map((combination) {
-                  return DataRow(
-                    cells: [
-                      ...combination.map((value) => DataCell(
-                        Text(value ? '1' : '0'),
-                      )),
-                      DataCell(
-                        Text(
-                          _evaluateExpression(combination, variables) ? '1' : '0'
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
+            const SizedBox(height: 40),
+            const Text(
+              'Truth Table',
+              style: TextStyle(
+                fontSize: 18, 
+                fontWeight: FontWeight.bold
               ),
+            ),
+            const SizedBox(height: 20),
+            TruthTable(
+              variables: variables,
+              combinations: combinations,
+              results: results,
             ),
             const SizedBox(height: 40),
             const Text(
