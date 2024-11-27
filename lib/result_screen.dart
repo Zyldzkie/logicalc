@@ -68,8 +68,9 @@ class ResultScreen extends StatelessWidget {
             }
           } else {
             result = result.substring(0, index) +
-                '!' +
+                '!(' +
                 result[index + 1] +
+                ')' +
                 (index + 2 < result.length ? result.substring(index + 2) : '');
           }
         }
@@ -78,7 +79,7 @@ class ResultScreen extends StatelessWidget {
     }
 
     // Handle NAND (↑) with parentheses
-    final nandRegex = RegExp(r'([A-Z]|\([^)]+\))\s*↑\s*([A-Z]|\([^)]+\))');
+    final nandRegex = RegExp(r'([A-Z]|\([^)]+\))\s*↑\s*(!?\([^)]+\)|!?[A-Z])');
     while (result.contains('↑')) {
       result = result.replaceAllMapped(nandRegex, (match) {
         String left = match.group(1)!;
@@ -88,7 +89,7 @@ class ResultScreen extends StatelessWidget {
     }
 
     // Handle NOR (↓) with parentheses
-    final norRegex = RegExp(r'([A-Z]|\([^)]+\))\s*↓\s*([A-Z]|\([^)]+\))');
+    final norRegex = RegExp(r'([A-Z]|\([^)]+\))\s*↓\s*(!?\([^)]+\)|!?[A-Z])');
     while (result.contains('↓')) {
       result = result.replaceAllMapped(norRegex, (match) {
         String left = match.group(1)!;
