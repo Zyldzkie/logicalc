@@ -176,58 +176,99 @@ class ResultScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Expression: $expression',
-              style: const TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Expression: $expression',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 40),
+                  const Text(
+                    'Truth Table',
+                    style: TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TruthTable(
+                    variables: variables,
+                    combinations: combinations,
+                    results: results,
+                  ),
+                  const SizedBox(height: 40),
+                  const Text(
+                    'Timing Diagram',
+                    style: TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TimingDiagram(
+                    variables: variables,
+                    combinations: combinations,
+                    results: results,
+                  ),
+                  const SizedBox(height: 40),
+                  const Text(
+                    'Logic Circuit',
+                    style: TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  CircuitDiagram(expression: expression),
+                ],
               ),
             ),
-            const SizedBox(height: 40),
-            const Text(
-              'Truth Table',
-              style: TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.home),
+                    label: const Text('Go Home'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16), // Spacing between buttons
+                Expanded(
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Calculate Again'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => ResultScreen(
+                            expression: expression,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            TruthTable(
-              variables: variables,
-              combinations: combinations,
-              results: results,
-            ),
-            const SizedBox(height: 40),
-            const Text(
-              'Timing Diagram',
-              style: TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold
-              ),
-            ),
-            const SizedBox(height: 20),
-            TimingDiagram(
-              variables: variables,
-              combinations: combinations,
-              results: results,
-            ),
-            const SizedBox(height: 40),
-            const Text(
-              'Logic Circuit',
-              style: TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold
-              ),
-            ),
-            const SizedBox(height: 20),
-            CircuitDiagram(expression: expression),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
