@@ -61,7 +61,20 @@ class CircuitDiagram extends StatelessWidget {
   void _parseExpression(String expr, Graph graph, Node parent) {
     expr = expr.trim();
     
+    // Remove outer parentheses recursively
     while (expr.startsWith('(') && expr.endsWith(')')) {
+      // Check if these are matching parentheses
+      int count = 0;
+      bool isMatching = true;
+      for (int i = 0; i < expr.length; i++) {
+        if (expr[i] == '(') count++;
+        if (expr[i] == ')') count--;
+        if (count == 0 && i < expr.length - 1) {
+          isMatching = false;
+          break;
+        }
+      }
+      if (!isMatching) break;
       expr = expr.substring(1, expr.length - 1).trim();
     }
 
@@ -75,7 +88,9 @@ class CircuitDiagram extends StatelessWidget {
         graph.addEdge(gateNode, parent);
 
         for (String operand in operands) {
-          _parseExpression(operand.trim(), graph, gateNode);
+          // Remove any remaining parentheses from operands
+          operand = operand.replaceAll('(', '').replaceAll(')', '').trim();
+          _parseExpression(operand, graph, gateNode);
         }
         return;
       }
@@ -87,6 +102,8 @@ class CircuitDiagram extends StatelessWidget {
       graph.addEdge(notGate, parent);
       _parseExpression(expr.substring(1), graph, notGate);
     } else if (RegExp(r'[A-Z]').hasMatch(expr)) {
+      // Remove any remaining parentheses from input nodes
+      expr = expr.replaceAll('(', '').replaceAll(')', '').trim();
       Node inputNode = Node.Id(expr);
       graph.addNode(inputNode);
       graph.addEdge(inputNode, parent);
@@ -99,17 +116,19 @@ class CircuitDiagram extends StatelessWidget {
     int start = 0;
     
     for (int i = 0; i < expr.length; i++) {
-      if (expr[i] == '(') parenthesesCount++;
-      else if (expr[i] == ')') parenthesesCount--;
+      if (expr[i] == '(') {
+        parenthesesCount++;
+      } else if (expr[i] == ')') {
+        parenthesesCount--;
+      }
       
       if (parenthesesCount == 0) {
         for (var op in ['∧', '∨', '↑', '↓', '⊕', '⊙']) {
           if (i + op.length <= expr.length && 
               expr.substring(i, i + op.length) == op) {
-            if (start < i) {
-              operands.add(expr.substring(start, i));
-            }
+            operands.add(expr.substring(start, i).trim());
             start = i + op.length;
+            i += op.length - 1;
             break;
           }
         }
@@ -117,13 +136,14 @@ class CircuitDiagram extends StatelessWidget {
     }
     
     if (start < expr.length) {
-      operands.add(expr.substring(start));
+      operands.add(expr.substring(start).trim());
     }
     
     return operands;
   }
 
   String? _findOperator(String expr) {
+    expr = expr.trim();
     int parenthesesCount = 0;
     List<String> operators = ['↑', '↓', '∨', '∧', '⊕', '⊙'];
     
