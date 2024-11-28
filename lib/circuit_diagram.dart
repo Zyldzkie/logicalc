@@ -83,13 +83,11 @@ class CircuitDiagram extends StatelessWidget {
       var operator = _findOperator(expr);
       if (operator != null) {
         String gateName = _getGateName(operator);
-        Node gateNode = Node.Id(gateName);
+        Node gateNode = Node.Id('$gateName-${graph.nodeCount()}');
         graph.addNode(gateNode);
         graph.addEdge(gateNode, parent);
 
         for (String operand in operands) {
-          // Remove any remaining parentheses from operands
-          operand = operand.replaceAll('(', '').replaceAll(')', '').trim();
           _parseExpression(operand, graph, gateNode);
         }
         return;
