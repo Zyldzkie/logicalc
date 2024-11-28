@@ -174,7 +174,9 @@ class CircuitDiagram extends StatelessWidget {
   }
 
   Widget _buildGateWidget(Node node) {
-    String gateType = node.key?.value as String;
+    String nodeId = node.key?.value as String;
+    // Extract the gate type by taking everything before the hyphen
+    String gateType = nodeId.split('-')[0];
     
     switch (gateType) {
       case 'AND':
