@@ -92,12 +92,12 @@ class _LandingPageState extends State<LandingPage> {
                 _buildFeaturePage(
                   icon: Icons.check_circle,
                   title: 'Efficient Conversions',
-                  description: 'Convert equations, diagrams, and generate truth tables.',
+                  description: 'Convert expressions, diagrams, and generate truth tables.',
                 ),
                 _buildFeaturePage(
                   icon: Icons.calculate,
                   title: 'Analyze Your Data',
-                  description: 'Utilize our tools to analyze your logical equations and data.',
+                  description: 'Utilize our tools to analyze your logical expressions and data.',
                 ),
                 _buildFeaturePage(
                   icon: Icons.table_chart,
@@ -242,7 +242,7 @@ class ConversionPage extends StatelessWidget {
                 );
               },
               child: const Text(
-                'Convert Equation',
+                'Convert Expression',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
@@ -253,7 +253,7 @@ class ConversionPage extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.calculate),
-            label: 'Convert Equation',
+            label: 'Convert Expression',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.table_chart),
@@ -419,7 +419,7 @@ class _EquationInputPageState extends State<EquationInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Equation Input', style: TextStyle(color: Colors.white)),
+        title: const Text('Expression Input', style: TextStyle(color: Colors.white)),
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -428,7 +428,7 @@ class _EquationInputPageState extends State<EquationInputPage> {
         child: Column(
           children: [
             const Text(
-              'Input your equation:',
+              'Input your Expression:',
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             const SizedBox(height: 20),
@@ -437,7 +437,7 @@ class _EquationInputPageState extends State<EquationInputPage> {
               readOnly: true,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Equation',
+                labelText: 'Expression',
               ),
             ),
             const SizedBox(height: 20),
