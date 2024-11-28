@@ -3,6 +3,7 @@ import '../models/expression_history.dart';
 import '../services/history_service.dart';
 import '../result_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'history_result_page.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -73,7 +74,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ResultScreen(
+                    builder: (context) => HistoryResultPage(
                       expression: entry.rawExpression,
                     ),
                   ),
