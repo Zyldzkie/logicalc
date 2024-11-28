@@ -6,7 +6,7 @@ import 'dart:math' as Math;
 import 'truth_table.dart';
 import 'models/expression_history.dart';
 import 'services/history_service.dart';
-
+import 'screens/expression_input.dart';
 class ResultScreen extends StatelessWidget {
   final String expression;
 
@@ -257,8 +257,7 @@ class ResultScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
-                          builder: (context) => ResultScreen(
-                            expression: expression,
+                          builder: (context) => ExpressionInput(
                           ),
                         ),
                       );
