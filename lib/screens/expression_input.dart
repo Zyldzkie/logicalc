@@ -10,6 +10,109 @@ class ExpressionInput extends StatefulWidget {
 
 class _ExpressionInputState extends State<ExpressionInput> {
   final TextEditingController _controller = TextEditingController();
+  String? _validationError;
+  static const operators = ['∧', '∨', '↑', '↓', '⊕', '⊙'];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_validateExpression);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_validateExpression);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _validateExpression() {
+    final expression = _controller.text;
+    setState(() {
+      // Check for empty expression
+      if (expression.isEmpty) {
+        _validationError = null;
+        return;
+      }
+
+      // Check for adjacent operands (variables)
+      for (int i = 0; i < expression.length - 1; i++) {
+        final current = expression[i];
+        final next = expression[i + 1];
+        
+        // If current char is a variable (A-C) and next char is also a variable
+        if (isVariable(current) && isVariable(next)) {
+          _validationError = 'Operands must be separated by operators';
+          return;
+        }
+        
+        // Check for negation placement
+        if (current == '¬' && (i > 0 && isVariable(expression[i - 1]))) {
+          _validationError = 'Negation must be placed before the operand';
+          return;
+        }
+      }
+
+      // Check for incomplete parentheses
+      int parenthesesCount = 0;
+      for (var char in expression.characters) {
+        if (char == '(') parenthesesCount++;
+        if (char == ')') parenthesesCount--;
+        if (parenthesesCount < 0) {
+          _validationError = 'Invalid parentheses order';
+          return;
+        }
+      }
+      if (parenthesesCount != 0) {
+        _validationError = 'Incomplete parentheses';
+        return;
+      }
+
+      // Check for mixing different operators without parentheses
+      String? currentOperator;
+      bool hasOperator = false;
+      
+      for (int i = 0; i < expression.length; i++) {
+        if (operators.contains(expression[i]) && expression[i] != '¬') {
+          if (!hasOperator) {
+            currentOperator = expression[i];
+            hasOperator = true;
+          } else if (expression[i] != currentOperator) {
+            _validationError = 'Different operators must be grouped with parentheses';
+            return;
+          }
+        }
+        // Reset operator check when encountering parentheses
+        if (expression[i] == '(') {
+          hasOperator = false;
+          currentOperator = null;
+        }
+      }
+
+      // Check for hanging operators
+      if (operators.contains(expression[expression.length - 1])) {
+        _validationError = 'Expression ends with an operator';
+        return;
+      }
+
+      // Check for consecutive operators
+      for (int i = 0; i < expression.length - 1; i++) {
+        if (operators.contains(expression[i]) && 
+            operators.contains(expression[i + 1]) &&
+            expression[i] != '¬') { // Allow negation before other operators
+          _validationError = 'Consecutive operators are not allowed';
+          return;
+        }
+      }
+
+      _validationError = null;
+    });
+  }
+
+  // Helper method to check if a character is a variable
+  bool isVariable(String char) {
+    return RegExp(r'[A-C]').hasMatch(char);
+  }
 
   void _handleKeyPress(String value) {
     setState(() {
@@ -46,23 +149,27 @@ class _ExpressionInputState extends State<ExpressionInput> {
             TextField(
               controller: _controller,
               readOnly: true,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
                 labelText: 'Expression',
+                errorText: _validationError,
               ),
             ),
             const SizedBox(height: 20),
             CustomKeyboard(onKeyPressed: _handleKeyPress),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ResultScreen(expression: _controller.text),
-                  ),
-                );
-              },
+              onPressed: _validationError == null && _controller.text.isNotEmpty
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ResultScreen(expression: _controller.text),
+                        ),
+                      );
+                    }
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.secondary,
               ),
