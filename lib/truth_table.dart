@@ -24,10 +24,10 @@ class TruthTable extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           )),
-          const DataColumn(
+          DataColumn(
             label: Text(
               'Result',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             ),
           ),
         ],
@@ -39,7 +39,7 @@ class TruthTable extends StatelessWidget {
                 Text(value ? '1' : '0'),
               )),
               DataCell(
-                Text(results[index] ? '1' : '0'),
+                Text(results[index] ? '1' : '0', style: TextStyle(color: Colors.red)),
               ),
             ],
           ),

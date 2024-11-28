@@ -17,7 +17,7 @@ class CircuitDiagram extends StatelessWidget {
       
     final Algorithm algorithm = SugiyamaAlgorithm(configuration);
 
-    Node resultNode = Node.Id('Result');
+    Node resultNode = Node.Id(expression);
     graph.addNode(resultNode);
 
     try {
@@ -41,6 +41,16 @@ class CircuitDiagram extends StatelessWidget {
             ..strokeWidth = 1
             ..style = PaintingStyle.stroke,
           builder: (Node node) {
+            if (node.key?.value == expression) {
+              return Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.red),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(node.key?.value.toString() ?? '', style: TextStyle(color: Colors.red)),
+              );
+            }
             return _buildGateWidget(node);
           },
         ),
