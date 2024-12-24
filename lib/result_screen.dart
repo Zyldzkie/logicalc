@@ -39,7 +39,6 @@ class ResultScreen extends StatelessWidget {
   String _convertToExpressionFormat(String input) {
     String result = input;
 
-    // Create a map for operator replacements
     final Map<String, String> operators = {
       '¬': '!',
       '∧': ' && ',
@@ -48,7 +47,6 @@ class ResultScreen extends StatelessWidget {
       '⊙': ' == ',
     };
 
-    // Replace NOT operator first
     int index = 0;
     while (index < result.length) {
       if (result[index] == '¬') {
@@ -66,14 +64,14 @@ class ResultScreen extends StatelessWidget {
                   '!(' +
                   result.substring(index + 2, endIndex - 1) +
                   ')' +
-                  result.substring(endIndex - 1);
+                  result.substring(endIndex);
             }
           } else {
             result = result.substring(0, index) +
                 '!(' +
                 result[index + 1] +
                 ')' +
-                (index + 2 < result.length ? result.substring(index + 2) : '');
+                result.substring(index + 2);
           }
         }
       }
@@ -100,19 +98,17 @@ class ResultScreen extends StatelessWidget {
       });
     }
 
-    // Replace other operators
     for (var entry in operators.entries) {
-      if (entry.key != '¬') { // Skip NOT as we already handled it
+      if (entry.key != '¬') {
         result = result.replaceAll(entry.key, entry.value);
       }
     }
 
-    // Add parentheses around the entire expression if not already present
     if (!result.startsWith('(')) {
       result = '($result)';
     }
 
-    print('Converted expression: $result'); // Debug print
+    print('Converted expression: $result');
     return result;
   }
 

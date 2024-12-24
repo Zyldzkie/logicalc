@@ -77,10 +77,7 @@ class _ExpressionInputState extends State<ExpressionInput> {
           if (!hasOperator) {
             currentOperator = expression[i];
             hasOperator = true;
-          } else if (expression[i] != currentOperator) {
-            _validationError = 'Different operators must be grouped with parentheses';
-            return;
-          }
+          } 
         }
         // Reset operator check when encountering parentheses
         if (expression[i] == '(') {
