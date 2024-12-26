@@ -11,7 +11,7 @@ class ExpressionInput extends StatefulWidget {
 class _ExpressionInputState extends State<ExpressionInput> {
   final TextEditingController _controller = TextEditingController();
   String? _validationError;
-  static const operators = ['∧', '∨', '↑', '↓', '⊕', '⊙'];
+  static const operators = ['•', '+', '↑', '↓', '⊕', '⊙'];
 
   @override
   void initState() {
@@ -195,8 +195,8 @@ class CustomKeyboard extends StatelessWidget {
         _buildKey('B'),
         _buildKey('C'),
         _buildKey('DEL', icon: Icons.backspace_outlined),
-        _buildKey('∧'),
-        _buildKey('∨'),
+        _buildKey('•'),
+        _buildKey('+'),
         _buildKey('¬'),
         _buildKey('↑'),
         _buildKey('↓'),

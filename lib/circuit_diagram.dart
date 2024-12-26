@@ -121,7 +121,7 @@ class CircuitDiagram extends StatelessWidget {
       }
       
       if (parenthesesCount == 0) {
-        for (var op in ['∧', '∨', '↑', '↓', '⊕', '⊙']) {
+        for (var op in ['•', '+', '↑', '↓', '⊕', '⊙']) {
           if (i + op.length <= expr.length && 
               expr.substring(i, i + op.length) == op) {
             operands.add(expr.substring(start, i).trim());
@@ -143,7 +143,7 @@ class CircuitDiagram extends StatelessWidget {
   String? _findOperator(String expr) {
     expr = expr.trim();
     int parenthesesCount = 0;
-    List<String> operators = ['↑', '↓', '∨', '∧', '⊕', '⊙'];
+    List<String> operators = ['↑', '↓', '+', '•', '⊕', '⊙'];
     
     for (int i = 0; i < expr.length; i++) {
       if (expr[i] == '(') parenthesesCount++;
@@ -163,8 +163,8 @@ class CircuitDiagram extends StatelessWidget {
 
   String _getGateName(String operator) {
     switch (operator) {
-      case '∧': return 'AND';
-      case '∨': return 'OR';
+      case '•': return 'AND';
+      case '+': return 'OR';
       case '↑': return 'NAND';
       case '↓': return 'NOR';
       case '⊕': return 'XOR';

@@ -42,11 +42,10 @@ class HistoryResultPage extends StatelessWidget {
   String _convertToExpressionFormat(String input) {
     String result = input;
 
-    // Create a map for operator replacements
     final Map<String, String> operators = {
       '¬': '!',
-      '∧': ' && ',
-      '∨': ' || ',
+      '•': ' && ',
+      '+': ' || ',
       '⊕': ' != ',
       '⊙': ' == ',
     };

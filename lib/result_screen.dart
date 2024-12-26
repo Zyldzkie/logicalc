@@ -41,8 +41,8 @@ class ResultScreen extends StatelessWidget {
 
     final Map<String, String> operators = {
       '¬': '!',
-      '∧': ' && ',
-      '∨': ' || ',
+      '•': ' && ',
+      '+': ' || ',
       '⊕': ' != ',
       '⊙': ' == ',
     };
