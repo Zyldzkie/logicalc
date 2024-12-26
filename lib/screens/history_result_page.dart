@@ -119,28 +119,59 @@ class HistoryResultPage extends StatelessWidget {
     return result;
   }
 
-  bool _evaluateExpression(List<bool> values, List<String> variables) {
+  List<String> _getSubExpressions(String expr) {
+    List<String> subExpressions = [];
+    
+    if (expr.contains('(')) {
+      int start = 0;
+      int count = 0;
+      
+      for (int i = 0; i < expr.length; i++) {
+        if (expr[i] == '(') {
+          if (count == 0) start = i;
+          count++;
+        } else if (expr[i] == ')') {
+          count--;
+          if (count == 0) {
+            subExpressions.add(expr.substring(start + 1, i));
+          }
+        }
+      }
+    }
+    
+    return subExpressions;
+  }
+
+  List<List<bool>> _evaluateSubExpressions(List<List<bool>> combinations, List<String> variables) {
+    List<String> subExpressions = _getSubExpressions(expression);
+    List<List<bool>> subResults = [];
+    
+    for (var combo in combinations) {
+      List<bool> rowResults = [];
+      for (var subExpr in subExpressions) {
+        rowResults.add(_evaluateExpression(combo, variables, subExpr));
+      }
+      subResults.add(rowResults);
+    }
+    
+    return subResults;
+  }
+
+  bool _evaluateExpression(List<bool> values, List<String> variables, [String? customExpr]) {
     try {
-      // Create context with variable values
       Map<String, dynamic> context = {};
       for (int i = 0; i < variables.length; i++) {
         context[variables[i]] = values[i];
       }
-
-      // Convert and evaluate expression
-      String expressionStr = _convertToExpressionFormat(expression);
-
-      print(expressionStr);
       
-      // Handle NAND and NOR after conversion
+      String expressionStr = _convertToExpressionFormat(customExpr ?? expression);
+      
       if (expressionStr.contains(' nand ')) {
-        expressionStr = '!(${expressionStr.replaceAll(' nand ', ' && ')})'; // Negate the AND expression
+        expressionStr = '!(${expressionStr.replaceAll(' nand ', ' && ')})';
       }
       if (expressionStr.contains(' nor ')) {
-        expressionStr = '!(${expressionStr.replaceAll(' nor ', ' || ')})';   // Negate the OR expression
+        expressionStr = '!(${expressionStr.replaceAll(' nor ', ' || ')})';
       }
-
-      print(expressionStr);
 
       final evaluator = const ExpressionEvaluator();
       final expr = Expression.parse(expressionStr);
@@ -157,12 +188,13 @@ class HistoryResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     List<String> variables = _getVariables();
     List<List<bool>> combinations = _generateCombinations(variables.length);
-    List<bool> results = combinations.map(
+    List<String> subExpressions = _getSubExpressions(expression);
+    List<List<bool>> subResults = _evaluateSubExpressions(combinations, variables);
+    List<bool> finalResults = combinations.map(
       (combo) => _evaluateExpression(combo, variables)
     ).toList();
 
     String convertedExpr = _convertToExpressionFormat(expression);
-
 
     return Scaffold(
       appBar: AppBar(
@@ -177,48 +209,37 @@ class HistoryResultPage extends StatelessWidget {
           children: [
             Text(
               'Expression: $expression',
-              style: const TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold
-              ),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 40),
             const Text(
               'Truth Table',
-              style: TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            //     TruthTable(
-            //   variables: variables,
-            //   combinations: combinations,
-            //   subExpressions: subExpressions,
-            //   subResults: subResults,
-            //   results: finalResults,
-            // ),
+            TruthTable(
+              variables: variables,
+              combinations: combinations,
+              subExpressions: subExpressions,
+              subResults: subResults,
+              results: finalResults,
+              expression: expression,
+            ),
             const SizedBox(height: 40),
             const Text(
               'Timing Diagram',
-              style: TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             TimingDiagram(
               variables: variables,
               combinations: combinations,
-              results: results,
+              results: finalResults,
             ),
             const SizedBox(height: 40),
             const Text(
               'Logic Circuit',
-              style: TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             CircuitDiagram(expression: expression),
