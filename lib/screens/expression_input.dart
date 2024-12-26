@@ -130,7 +130,7 @@ class _ExpressionInputState extends State<ExpressionInput> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expression Input', style: TextStyle(color: Colors.white)),
+        title: const Text('Equation Input', style: TextStyle(color: Colors.white)),
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -139,7 +139,7 @@ class _ExpressionInputState extends State<ExpressionInput> {
         child: Column(
           children: [
             const Text(
-              'Input your Expression:',
+              'Input your Equation:',
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             const SizedBox(height: 20),
@@ -148,7 +148,7 @@ class _ExpressionInputState extends State<ExpressionInput> {
               readOnly: true,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
-                labelText: 'Expression',
+                labelText: 'Equation',
                 errorText: _validationError,
               ),
             ),

@@ -62,7 +62,7 @@ class ConversionPage extends StatelessWidget {
                 );
               },
               child: const Text(
-                'Convert Expression',
+                'Convert Equation',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
@@ -73,7 +73,7 @@ class ConversionPage extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.calculate),
-            label: 'Convert Expression',
+            label: 'Convert Equation',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.table_chart),
@@ -157,17 +157,17 @@ class _LandingPageState extends State<LandingPage> {
                 _buildFeaturePage(
                   icon: Icons.check_circle,
                   title: 'Efficient Conversions',
-                  description: 'Convert expressions, diagrams, and generate truth tables.',
+                  description: 'Convert equations, diagrams, and generate truth tables.',
                 ),
                 _buildFeaturePage(
                   icon: Icons.calculate,
                   title: 'Analyze Your Data',
-                  description: 'Utilize our tools to analyze your logical expressions and data.',
+                  description: 'Utilize our tools to analyze your logical equations and data.',
                 ),
                 _buildFeaturePage(
                   icon: Icons.table_chart,
                   title: 'Generate Truth Tables',
-                  description: 'Easily create truth tables from your logical expressions.',
+                  description: 'Easily create truth tables from your logical equations.',
                 ),
               ],
             ),
