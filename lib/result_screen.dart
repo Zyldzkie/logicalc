@@ -115,18 +115,55 @@ class ResultScreen extends StatelessWidget {
   List<String> _getSubExpressions(String expr) {
     List<String> subExpressions = [];
     
+    // Handle negations first
+    int index = 0;
+    while (index < expr.length) {
+      if (expr[index] == '¬') {
+        if (index + 1 < expr.length) {
+          if (expr[index + 1] == '(') {
+            // Find matching closing parenthesis
+            int count = 1;
+            int endIndex = index + 2;
+            while (count > 0 && endIndex < expr.length) {
+              if (expr[endIndex] == '(') count++;
+              if (expr[endIndex] == ')') count--;
+              endIndex++;
+            }
+            if (endIndex <= expr.length) {
+              String innerExpr = expr.substring(index + 2, endIndex - 1);
+              String negationExpr = '¬(' + innerExpr + ')';
+              if (!subExpressions.contains(negationExpr)) {
+                subExpressions.add(negationExpr);
+              }
+            }
+          } else {
+            // Single variable negation
+            String negationExpr = '¬' + expr[index + 1];
+            if (!subExpressions.contains(negationExpr)) {
+              subExpressions.add(negationExpr);
+            }
+          }
+        }
+      }
+      index++;
+    }
+    
+    // Handle other parenthesized expressions
     if (expr.contains('(')) {
-      int start = 0;
+      index = 0;
       int count = 0;
       
       for (int i = 0; i < expr.length; i++) {
         if (expr[i] == '(') {
-          if (count == 0) start = i;
+          if (count == 0) index = i;
           count++;
         } else if (expr[i] == ')') {
           count--;
           if (count == 0) {
-            subExpressions.add(expr.substring(start + 1, i));
+            String subExpr = expr.substring(index + 1, i);
+            if (!subExpressions.contains(subExpr)) {
+              subExpressions.add(subExpr);
+            }
           }
         }
       }
