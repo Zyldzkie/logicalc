@@ -69,14 +69,14 @@ class HistoryResultPage extends StatelessWidget {
                   '!(' +
                   result.substring(index + 2, endIndex - 1) +
                   ')' +
-                  result.substring(endIndex - 1);
+                  result.substring(endIndex);
             }
           } else {
             result = result.substring(0, index) +
                 '!(' +
                 result[index + 1] +
                 ')' +
-                (index + 2 < result.length ? result.substring(index + 2) : '');
+                result.substring(index + 2);
           }
         }
       }
