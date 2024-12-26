@@ -6,6 +6,7 @@ class TruthTable extends StatelessWidget {
   final List<String> subExpressions;
   final List<List<bool>> subResults;
   final List<bool> results;
+  final String expression;
 
   const TruthTable({
     super.key,
@@ -14,6 +15,7 @@ class TruthTable extends StatelessWidget {
     required this.subExpressions,
     required this.subResults,
     required this.results,
+    required this.expression,
   });
 
   @override
@@ -28,8 +30,8 @@ class TruthTable extends StatelessWidget {
           ...subExpressions.map((expr) => DataColumn(
             label: Text(expr, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
           )),
-          const DataColumn(
-            label: Text('Result', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+          DataColumn(
+            label: Text(expression, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
           ),
         ],
         rows: List.generate(

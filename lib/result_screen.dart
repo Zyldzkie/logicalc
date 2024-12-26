@@ -237,6 +237,7 @@ class ResultScreen extends StatelessWidget {
                     subExpressions: subExpressions,
                     subResults: subResults,
                     results: finalResults,
+                    expression: expression,
                   ),
                   const SizedBox(height: 40),
                   const Text(
