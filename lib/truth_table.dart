@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 class TruthTable extends StatelessWidget {
   final List<String> variables;
   final List<List<bool>> combinations;
+  final List<String> subExpressions;
+  final List<List<bool>> subResults;
   final List<bool> results;
 
   const TruthTable({
     super.key,
     required this.variables,
     required this.combinations,
+    required this.subExpressions,
+    required this.subResults,
     required this.results,
   });
 
@@ -19,16 +23,13 @@ class TruthTable extends StatelessWidget {
       child: DataTable(
         columns: [
           ...variables.map((var_) => DataColumn(
-            label: Text(
-              var_,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+            label: Text(var_, style: const TextStyle(fontWeight: FontWeight.bold)),
           )),
-          DataColumn(
-            label: Text(
-              'Result',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-            ),
+          ...subExpressions.map((expr) => DataColumn(
+            label: Text(expr, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+          )),
+          const DataColumn(
+            label: Text('Result', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
           ),
         ],
         rows: List.generate(
@@ -38,8 +39,11 @@ class TruthTable extends StatelessWidget {
               ...combinations[index].map((value) => DataCell(
                 Text(value ? '1' : '0'),
               )),
+              ...subResults[index].map((value) => DataCell(
+                Text(value ? '1' : '0', style: const TextStyle(color: Colors.blue)),
+              )),
               DataCell(
-                Text(results[index] ? '1' : '0', style: TextStyle(color: Colors.red)),
+                Text(results[index] ? '1' : '0', style: const TextStyle(color: Colors.red)),
               ),
             ],
           ),

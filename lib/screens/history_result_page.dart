@@ -191,11 +191,13 @@ class HistoryResultPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            TruthTable(
-              variables: variables,
-              combinations: combinations,
-              results: results,
-            ),
+            //     TruthTable(
+            //   variables: variables,
+            //   combinations: combinations,
+            //   subExpressions: subExpressions,
+            //   subResults: subResults,
+            //   results: finalResults,
+            // ),
             const SizedBox(height: 40),
             const Text(
               'Timing Diagram',

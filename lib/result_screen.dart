@@ -112,16 +112,52 @@ class ResultScreen extends StatelessWidget {
     return result;
   }
 
-  bool _evaluateExpression(List<bool> values, List<String> variables) {
+  List<String> _getSubExpressions(String expr) {
+    List<String> subExpressions = [];
+    
+    if (expr.contains('(')) {
+      int start = 0;
+      int count = 0;
+      
+      for (int i = 0; i < expr.length; i++) {
+        if (expr[i] == '(') {
+          if (count == 0) start = i;
+          count++;
+        } else if (expr[i] == ')') {
+          count--;
+          if (count == 0) {
+            subExpressions.add(expr.substring(start + 1, i));
+          }
+        }
+      }
+    }
+    
+    return subExpressions;
+  }
+
+  List<List<bool>> _evaluateSubExpressions(List<List<bool>> combinations, List<String> variables) {
+    List<String> subExpressions = _getSubExpressions(expression);
+    List<List<bool>> subResults = [];
+    
+    for (var combo in combinations) {
+      List<bool> rowResults = [];
+      for (var subExpr in subExpressions) {
+        rowResults.add(_evaluateExpression(combo, variables, subExpr));
+      }
+      subResults.add(rowResults);
+    }
+    
+    return subResults;
+  }
+
+  bool _evaluateExpression(List<bool> values, List<String> variables, [String? customExpr]) {
     try {
-      // Create context with variable values
       Map<String, dynamic> context = {};
       for (int i = 0; i < variables.length; i++) {
         context[variables[i]] = values[i];
       }
-
-      // Convert and evaluate expression
-      String expressionStr = _convertToExpressionFormat(expression);
+      
+      String expressionStr = _convertToExpressionFormat(customExpr ?? expression);
 
       print(expressionStr);
       
@@ -159,7 +195,9 @@ class ResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     List<String> variables = _getVariables();
     List<List<bool>> combinations = _generateCombinations(variables.length);
-    List<bool> results = combinations.map(
+    List<String> subExpressions = _getSubExpressions(expression);
+    List<List<bool>> subResults = _evaluateSubExpressions(combinations, variables);
+    List<bool> finalResults = combinations.map(
       (combo) => _evaluateExpression(combo, variables)
     ).toList();
 
@@ -196,7 +234,9 @@ class ResultScreen extends StatelessWidget {
                   TruthTable(
                     variables: variables,
                     combinations: combinations,
-                    results: results,
+                    subExpressions: subExpressions,
+                    subResults: subResults,
+                    results: finalResults,
                   ),
                   const SizedBox(height: 40),
                   const Text(
@@ -210,7 +250,7 @@ class ResultScreen extends StatelessWidget {
                   TimingDiagram(
                     variables: variables,
                     combinations: combinations,
-                    results: results,
+                    results: finalResults,
                   ),
                   const SizedBox(height: 40),
                   const Text(
